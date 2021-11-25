@@ -4,8 +4,8 @@ class UserC {
   async store(req, res) {
     try {
       const novoUser = await User.create(req.body);
-      console.log(req.body);
-      return res.json(novoUser);
+      const { id, nome, email } = novoUser;
+      return res.json({ id, nome, email });
     } catch (e) {
       return res.status(400).json({
         errors: e.errors.map((err) => err.message),
@@ -44,8 +44,9 @@ class UserC {
       console.log(req.body);
 
       const novosDados = await user.update(req.body);
+      const { id, nome, email } = novosDados;
 
-      return res.json(novosDados);
+      return res.json({ id, nome, email });
     } catch (e) {
       console.log(e);
       return res.status(400).json({
@@ -56,14 +57,7 @@ class UserC {
 
   async delete(req, res) {
     try {
-      const { id } = req.params;
-      if (!id) {
-        return res.status(400).json({
-          errors: ['ID não enviado'],
-        });
-      }
-
-      const user = await User.findByPk(id);
+      const user = await User.findByPk(req.userId);
       if (!user) {
         return res.status(400).json({
           errors: ['Usuario não existe'],
